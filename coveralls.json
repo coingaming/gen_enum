@@ -1,0 +1,16 @@
+{
+  "coverage_options": {
+    "treat_no_relevant_lines_as_covered": false,
+    "minimum_coverage": 100
+  },
+  "skip_files": [
+    "test/*",
+
+    "lib/gen_enum_web.ex",
+    "lib/gen_enum/application.ex",
+    "lib/gen_enum/repo.ex",
+
+    "lib/gen_enum_web/endpoint.ex",
+    "lib/gen_enum_web/router.ex"
+  ]
+}
