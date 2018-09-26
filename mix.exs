@@ -57,6 +57,7 @@ defmodule GenEnum.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:aspire, "~> 0.1.0"},
       {:ecto_enum, "~> 1.1.0", organization: "coingaming"},
       # development tools
       {:excoveralls, "~> 0.8", only: [:dev, :test], runtime: false},
