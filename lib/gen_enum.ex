@@ -8,11 +8,11 @@ defmodule GenEnum do
   Macro defines helper modules for better enum support
 
   - `EctoEnum` definition
-  - `Utils` module with helpers funtime functions
+  - `Utils` module with helper functions
   - `Items` module with macro wrapper for each enum value (to not use atoms in source code)
   - `Meta` module with heplful macros (to not use atoms in source code)
 
-  Arguments are the same as in `EctoEnum` defenum
+  Arguments are the same as in `EctoEnum` defenum macro
   """
 
   defmacro defenum(quoted_module, quoted_database_type, quoted_values) do
@@ -85,15 +85,25 @@ defmodule GenEnum do
                 |> from_string_priv
                 |> case do
                   :error ->
-                    {:error, "can't convert value to #{unquote(module)}, got invalid string from: #{inpect value}"}
-                  result ->
+                    {:error, "can not convert value to #{unquote(module)}, got invalid string from: #{inspect value}"}
+                  {:ok, result} ->
                     {:ok, result}
                 end
               false ->
-                {:error, "can't convert value to #{unquote(module)}, got invalid binary from: #{inpect value}"}
+                {:error, "can not convert value to #{unquote(module)}, got invalid binary from: #{inspect value}"}
             end
           ^value ->
-            {:error, "can't convert value to #{unquote(module)}, got invalid term: #{inpect value}"}
+            {:error, "can not convert value to #{unquote(module)}, got invalid term: #{inspect value}"}
+        end
+      end
+
+      @spec to_enum!(any) :: unquote(module).Meta.t | no_return
+      def to_enum!(value) do
+        value
+        |> to_enum
+        |> case do
+          {:ok, result} -> result
+          {:error, error} -> raise(error)
         end
       end
     end
