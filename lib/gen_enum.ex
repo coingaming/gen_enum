@@ -1,7 +1,7 @@
 defmodule GenEnum do
 
   @moduledoc """
-  Better enumerables support for Elixir and Ecto
+  Better enumerations support for Elixir and Ecto
   """
 
   @doc """

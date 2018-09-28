@@ -34,7 +34,7 @@ defmodule GenEnum.MixProject do
       homepage_url: "https://github.com/coingaming/gen_enum",
       docs:         [main: "readme", extras: ["README.md"]],
       # hex.pm stuff
-      description:  "better enumerables support for Elixir and Ecto",
+      description:  "Better enumerations support for Elixir and Ecto",
       package: [
         organization: "coingaming",
         licenses: ["Apache 2.0"],

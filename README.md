@@ -5,11 +5,11 @@
 
 <img src="priv/gen_enum_logo.png" width="300"/>
 
-Enumerables are common abstraction to express the limited set of values. In Elixir language enumerable values are usually expressed as atoms. **&GenEnum.defenum/3** macro generates compile/runtime utilities for given enumerables. It accepts 3 arguments:
+Enumerations are common abstraction to express the limited set of values. In Elixir language enumeration values are usually expressed as atoms. **&GenEnum.defenum/3** macro generates compile/runtime utilities for given enumeration. It accepts 3 arguments:
 
-1. Main module of enum definition, example: **OS** (atom)
-2. Enumerable datatype alias for database, example: **:os** (atom)
-3. Possible enumerable values, example: **[:LINUX, :MAC, :WINDOWS]** (list of atoms)
+1. Main module of enumeration definition, example: **OS** (atom)
+2. Enumeration type alias for database, example: **:os** (atom)
+3. Possible enumeration elements, example: **[:LINUX, :MAC, :WINDOWS]** (list of atoms)
 
 ## Installation
 
@@ -26,7 +26,7 @@ end
 
 ## Example
 
-Let's use **&GenEnum.defenum/3** macro and generate **OS** enumerable:
+Let's use **&GenEnum.defenum/3** macro and generate **OS** enumeration:
 
 ```elixir
 require GenEnum
@@ -36,7 +36,7 @@ Under **OS** module namespace this expression generates 4 additional modules:
 
 #### 1) OS.EctoEnum
 
-Module contains standard [EctoEnum](https://github.com/gjaldon/ecto_enum) definition of given enumerable. Can be used for Ecto integration and database migrations (read EctoEnum manual).
+Module contains standard [EctoEnum](https://github.com/gjaldon/ecto_enum) definition of given enumeration. Can be used for Ecto integration and database migrations (read EctoEnum manual).
 
 #### 2) OS.Items
 
@@ -55,7 +55,7 @@ iex> OS.Items.mac
 
 #### 3) OS.Meta
 
-Module contains **@type t** definition for enumerable and **macro** helpers for guards, Ecto migrations and any other places where those macros are useful
+Module contains **@type t** definition for enumeration and **macro** helpers for guards, Ecto migrations and any other places where those macros are useful
 
 ```elixir
 iex> require OS.Meta
@@ -82,7 +82,7 @@ OS.Meta
   :os
   ```
 
-  - **values** list of all possible enumerable values
+  - **values** list of all possible enumeration values
 
   ```elixir
   iex> OS.Meta.values
@@ -103,7 +103,7 @@ OS.Meta
 
 Module contains some helper **functions**
 
-  - **to_enum** and **to_enum!** are polymorphic functions to convert term into enumerable value (if it is possible)
+  - **to_enum** and **to_enum!** are polymorphic functions to convert term into enumeration value (if it is possible)
 
   ```elixir
   iex> OS.Utils.to_enum :mac
