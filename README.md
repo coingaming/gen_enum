@@ -34,11 +34,11 @@ GenEnum.defenum(OS, :os, [:LINUX, :MAC, :WINDOWS])
 ```
 Under **OS** module namespace this expression generates 4 additional modules:
 
-#### 1) OS.EctoEnum
+### 1) OS.EctoEnum
 
 Module contains standard [EctoEnum](https://github.com/gjaldon/ecto_enum) definition of given enumeration. Can be used for Ecto integration and database migrations (read EctoEnum manual).
 
-#### 2) OS.Items
+### 2) OS.Items
 
 Module contains **macro** wrappers for the every value of given enum. It's recommended to use macro wrappers instead of the atom literals to avoid runtime errors (for example, after refactoring)
 
@@ -53,7 +53,7 @@ iex> OS.Items.mac
 :MAC
 ```
 
-#### 3) OS.Meta
+### 3) OS.Meta
 
 Module contains **@type t** definition for enumeration and **macro** helpers for guards, Ecto migrations and any other places where those macros are useful
 
@@ -99,7 +99,7 @@ OS.Meta
   false
   ```
 
-#### 4) OS.Utils
+### 4) OS.Utils
 
 Module contains some helper **functions**
 
