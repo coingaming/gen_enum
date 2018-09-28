@@ -1,8 +1,67 @@
+require GenEnum
+GenEnum.defenum(OS, :os, [:LINUX, :MAC, :WINDOWS])
+
 defmodule GenEnumTest do
   use ExUnit.Case
   doctest GenEnum
 
-  test "greets the world" do
-    assert GenEnum.hello() == :world
+  require OS.Items
+  require OS.Meta
+
+  test "EctoEnum" do
+    assert OS.EctoEnum.type == :os
+  end
+
+  test "Items" do
+    assert OS.Items.linux == :LINUX
+    assert OS.Items.mac == :MAC
+    assert OS.Items.windows == :WINDOWS
+  end
+
+  test "Meta.t" do
+    defmodule Game do
+      require OS.Items
+
+      @spec choose_os(pos_integer) :: OS.Meta.t
+      def choose_os(min_fps) when (min_fps <= 30), do: OS.Items.linux
+      def choose_os(min_fps) when (min_fps <= 60), do: OS.Items.mac
+      def choose_os(_), do: OS.Items.windows
+    end
+
+    assert Game.choose_os(1) == :LINUX
+    assert Game.choose_os(31) == :MAC
+    assert Game.choose_os(61) == :WINDOWS
+  end
+
+  test "Meta.database_type" do
+    assert OS.Meta.database_type == :os
+  end
+
+  test "Meta.values" do
+    assert OS.Meta.values == [:LINUX, :MAC, :WINDOWS]
+  end
+
+  test "Meta.is_type" do
+    assert OS.Meta.is_type :MAC
+    assert not OS.Meta.is_type :HELLO
+  end
+
+  test "Utils.to_enum" do
+    assert {:ok, :MAC} == OS.Utils.to_enum :mac
+    assert {:ok, :MAC} == OS.Utils.to_enum "mac"
+    assert {:ok, :MAC} == OS.Utils.to_enum "Mac\n"
+    assert {
+      :error,
+      "can not convert value to Elixir.OS, got invalid string from: \"MacOs\""
+    } == OS.Utils.to_enum "MacOs"
+  end
+
+  test "Utils.to_enum!" do
+    assert :MAC == OS.Utils.to_enum! :mac
+    assert :MAC == OS.Utils.to_enum! "mac"
+    assert :MAC == OS.Utils.to_enum! "Mac\n"
+    assert_raise RuntimeError, ~r/can not convert value to Elixir.OS, got invalid string from: \"MacOs\"/, fn ->
+      OS.Utils.to_enum! "MacOs"
+    end
   end
 end

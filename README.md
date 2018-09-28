@@ -1,10 +1,15 @@
 # GenEnum
 
+[![Hex](https://raw.githubusercontent.com/tim2CF/static-asserts/master/build-passing.svg?sanitize=true)](https://hex.pm/packages/coingaming/gen_enum/)
+[![Documentation](https://raw.githubusercontent.com/tim2CF/static-asserts/master/documentation-passing.svg?sanitize=true)](https://coingaming.hexdocs.pm/gen_enum/)
+
+<img src="priv/gen_enum_logo.png" width="300"/>
+
 Enumerables are common abstraction to express the limited set of values. In Elixir language enumerable values are usually expressed as atoms. **&GenEnum.defenum/3** macro generates compile/runtime utilities for given enumerables. It accepts 3 arguments:
 
-1. Main module of enum definition (atom)
-2. Enumerable datatype alias for database (atom)
-3. Possible enumerable values (list of atoms)
+1. Main module of enum definition, example: **OS** (atom)
+2. Enumerable datatype alias for database, example: **:os** (atom)
+3. Possible enumerable values, example: **[:LINUX, :MAC, :WINDOWS]** (list of atoms)
 
 ## Installation
 
@@ -14,7 +19,7 @@ by adding `gen_enum` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:gen_enum, "~> 0.1.0"}
+    {:gen_enum, "~> X.X.X", organization: "coingaming"}
   ]
 end
 ```
@@ -27,7 +32,7 @@ Let's use **&GenEnum.defenum/3** macro and generate **OS** enumerable:
 require GenEnum
 GenEnum.defenum(OS, :os, [:LINUX, :MAC, :WINDOWS])
 ```
-On top of **OS** module this expression generates 4 additional modules:
+Under **OS** module namespace this expression generates 4 additional modules:
 
 #### 1) OS.EctoEnum
 
@@ -50,7 +55,7 @@ iex> OS.Items.mac
 
 #### 3) OS.Meta
 
-Module contains **@type t** definition for enumerable and **macro** helpers for guards, Ecto migrations and any other places where those macros are useful.
+Module contains **@type t** definition for enumerable and **macro** helpers for guards, Ecto migrations and any other places where those macros are useful
 
 ```elixir
 iex> require OS.Meta

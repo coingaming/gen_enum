@@ -8,6 +8,7 @@ defmodule GenEnum.MixProject do
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      aliases: aliases(),
       # excoveralls
       test_coverage:      [tool: ExCoveralls],
       preferred_cli_env:  [
@@ -65,6 +66,12 @@ defmodule GenEnum.MixProject do
       {:ex_doc, "~> 0.19",     only: [:dev, :test], runtime: false},
       {:credo, "~> 0.9",       only: [:dev, :test], runtime: false},
       {:boilex, "~> 0.2",      only: [:dev, :test], runtime: false},
+    ]
+  end
+
+  defp aliases do
+    [
+      docs: ["docs", "cmd mkdir -p doc/priv/", "cmd cp -R priv/ doc/priv/", "docs"],
     ]
   end
 end
