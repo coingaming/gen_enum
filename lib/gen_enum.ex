@@ -17,7 +17,10 @@ defmodule GenEnum do
 
   defmacro defenum(quoted_module, quoted_database_type, quoted_values) do
 
-    {module, []}          = Code.eval_quoted(quoted_module, [], __CALLER__)
+    %Macro.Env{module: caller_module} = __CALLER__
+
+    {given_module, []}    = Code.eval_quoted(quoted_module, [], __CALLER__)
+    module                = Module.concat(caller_module, given_module)
     {database_type, []}   = Code.eval_quoted(quoted_database_type, [], __CALLER__)
     {values = [_|_], []}  = Code.eval_quoted(quoted_values, [], __CALLER__)
 
