@@ -19,8 +19,8 @@ defmodule GenEnum do
 
     %Macro.Env{module: caller_module} = __CALLER__
 
-    {given_module, []}    = Code.eval_quoted(quoted_module, [], __CALLER__)
-    module                = Module.concat(caller_module, given_module)
+    {module, []}          = Code.eval_quoted(quoted_module, [], __CALLER__)
+    full_module           = Module.concat(caller_module, module)
     {database_type, []}   = Code.eval_quoted(quoted_database_type, [], __CALLER__)
     {values = [_|_], []}  = Code.eval_quoted(quoted_values, [], __CALLER__)
 
@@ -43,7 +43,7 @@ defmodule GenEnum do
       end
 
       defmodule unquote(module).Utils do
-        unquote(define_to_enum(module))
+        unquote(define_to_enum(module, full_module))
         unquote(define_from_string_priv(values))
       end
 
@@ -70,9 +70,9 @@ defmodule GenEnum do
   # priv code generators
   #
 
-  defp define_to_enum(module) do
+  defp define_to_enum(module, full_module) do
     quote do
-      @spec to_enum(any) :: {:ok, unquote(module).Meta.t} | {:error, String.t}
+      @spec to_enum(any) :: {:ok, unquote(full_module).Meta.t} | {:error, String.t}
       def to_enum(value) do
         value
         |> Aspire.to_string
@@ -100,7 +100,7 @@ defmodule GenEnum do
         end
       end
 
-      @spec to_enum!(any) :: unquote(module).Meta.t | no_return
+      @spec to_enum!(any) :: unquote(full_module).Meta.t | no_return
       def to_enum!(value) do
         value
         |> to_enum
