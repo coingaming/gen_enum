@@ -22,7 +22,7 @@ defmodule GenEnum do
     {module, []}          = Code.eval_quoted(quoted_module, [], __CALLER__)
     full_module           = Module.concat(caller_module, module)
     {database_type, []}   = Code.eval_quoted(quoted_database_type, [], __CALLER__)
-    {values = [_|_], []}  = Code.eval_quoted(quoted_values, [], __CALLER__)
+    {values, []}          = Code.eval_quoted(quoted_values, [], __CALLER__)
 
     :ok = validate_module(module)
     :ok = validate_database_type(database_type)

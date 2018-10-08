@@ -1,4 +1,5 @@
 require GenEnum
+GenEnum.defenum(Single, :single, [:ONE])
 GenEnum.defenum(OS, :os, [:LINUX, :MAC, :WINDOWS])
 
 defmodule GenEnumTest do
@@ -62,6 +63,46 @@ defmodule GenEnumTest do
     assert :MAC == OS.Utils.to_enum! "Mac\n"
     assert_raise RuntimeError, ~r/can not convert value to Elixir.OS, got invalid string from: \"MacOs\"/, fn ->
       OS.Utils.to_enum! "MacOs"
+    end
+  end
+
+  test "invalid module" do
+    assert_raise RuntimeError, "invalid module name \"OS\"", fn ->
+      quote do
+        require GenEnum
+        GenEnum.defenum("OS", :os, [:LINUX, :MAC, :WINDOWS])
+      end
+      |> Code.eval_quoted
+    end
+  end
+
+  test "invalid database type" do
+    assert_raise RuntimeError, "invalid database type \"os\"", fn ->
+      quote do
+        require GenEnum
+        GenEnum.defenum(OS, "os", [:LINUX, :MAC, :WINDOWS])
+      end
+      |> Code.eval_quoted
+    end
+  end
+
+  test "invalid enum values (empty)" do
+    assert_raise RuntimeError, "invalid enum values []", fn ->
+      quote do
+        require GenEnum
+        GenEnum.defenum(OS, :os, [])
+      end
+      |> Code.eval_quoted
+    end
+  end
+
+  test "invalid enum values" do
+    assert_raise RuntimeError, "invalid enum values [\"LINUX\"]", fn ->
+      quote do
+        require GenEnum
+        GenEnum.defenum(OS, :os, ["LINUX", :MAC, :WINDOWS])
+      end
+      |> Code.eval_quoted
     end
   end
 end
