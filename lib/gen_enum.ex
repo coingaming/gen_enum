@@ -45,6 +45,9 @@ defmodule GenEnum do
       defmodule unquote(module).Utils do
         unquote(define_to_enum(module, full_module))
         unquote(define_from_string_priv(values))
+        def values do
+          unquote(values)
+        end
       end
 
       defmodule unquote(module).Meta do

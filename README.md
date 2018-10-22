@@ -124,4 +124,7 @@ Module contains some helper **functions**
   iex> OS.Utils.to_enum! "MacOs"
   ** (RuntimeError) can not convert value to Elixir.OS, got invalid string from: "MacOs"
       iex:4: OS.Utils.to_enum!/1
+
+  iex> OS.Utils.values
+  [:LINUX, :MAC, :WINDOWS]
   ```

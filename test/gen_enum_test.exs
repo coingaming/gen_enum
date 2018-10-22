@@ -66,6 +66,10 @@ defmodule GenEnumTest do
     end
   end
 
+  test "Utils.values" do
+    assert OS.Utils.values == [:LINUX, :MAC, :WINDOWS]
+  end
+
   test "invalid module" do
     assert_raise RuntimeError, "invalid module name \"OS\"", fn ->
       quote do
