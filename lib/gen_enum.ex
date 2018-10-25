@@ -24,7 +24,7 @@ defmodule GenEnum do
     %Macro.Env{module: caller_module} = __CALLER__
 
     {module, []} = Code.eval_quoted(quoted_module, [], __CALLER__)
-    full_module = quoted_module && Module.concat(caller_module, module) || caller_module
+    full_module = (module && Module.concat(caller_module, module)) || caller_module
     {database_type, []} = Code.eval_quoted(quoted_database_type, [], __CALLER__)
     {values, []} = Code.eval_quoted(quoted_values, [], __CALLER__)
 
@@ -40,16 +40,16 @@ defmodule GenEnum do
       require EctoEnum
 
       EctoEnum.defenum(
-        unquote(concat_module([full_module, module, "EctoEnum"])),
+        unquote(Module.concat(full_module, "EctoEnum")),
         unquote(database_type),
         unquote(values)
       )
 
-      defmodule unquote(concat_module([full_module, module, "Items"])) do
+      defmodule unquote(Module.concat(full_module, "Items")) do
         unquote(define_enum_items(values))
       end
 
-      defmodule unquote(concat_module([full_module, module, "Utils"])) do
+      defmodule unquote(Module.concat(full_module, "Utils")) do
         unquote(define_to_enum(full_module))
         unquote(define_from_string_priv(values))
 
@@ -58,7 +58,7 @@ defmodule GenEnum do
         end
       end
 
-      defmodule unquote(concat_module([full_module, module, "Meta"])) do
+      defmodule unquote(Module.concat(full_module, "Meta")) do
         unquote(define_enum_typespec(values))
 
         defmacro database_type do
@@ -83,12 +83,6 @@ defmodule GenEnum do
   #
   # priv code generators
   #
-
-  defp concat_module(modules) do
-    modules
-    |> Enum.reject(&!&1)
-    |> Module.concat()
-  end
 
   defp define_to_enum(module) do
     quote do
