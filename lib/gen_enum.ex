@@ -24,7 +24,7 @@ defmodule GenEnum do
     %Macro.Env{module: caller_module} = __CALLER__
 
     {module, []} = Code.eval_quoted(quoted_module, [], __CALLER__)
-    full_module = module && Module.concat(caller_module, module) || caller_module
+    full_module = quoted_module && Module.concat(caller_module, module) || caller_module
     {database_type, []} = Code.eval_quoted(quoted_database_type, [], __CALLER__)
     {values, []} = Code.eval_quoted(quoted_values, [], __CALLER__)
 
