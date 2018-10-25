@@ -1,6 +1,14 @@
 require GenEnum
 GenEnum.defenum(Single, :single, [:ONE])
-GenEnum.defenum(OS, :os, [:LINUX, :MAC, :WINDOWS])
+
+defmodule OS do
+  require GenEnum
+  GenEnum.defenum(:os, [:LINUX, :MAC, :WINDOWS])
+
+  defmodule Kala do
+    def apa, do: :kala
+  end
+end
 
 defmodule GenEnumTest do
   use ExUnit.Case
