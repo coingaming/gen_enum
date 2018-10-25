@@ -4,10 +4,6 @@ GenEnum.defenum(Single, :single, [:ONE])
 defmodule OS do
   require GenEnum
   GenEnum.defenum(:os, [:LINUX, :MAC, :WINDOWS])
-
-  defmodule Kala do
-    def apa, do: :kala
-  end
 end
 
 defmodule GenEnumTest do
