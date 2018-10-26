@@ -1,5 +1,15 @@
 # Change Log
 
+## [v0.2.4](https://github.com/coingaming/gen_enum/tree/v0.2.4) (2018-10-26)
+[Full Changelog](https://github.com/coingaming/gen_enum/compare/v0.2.3...v0.2.4)
+
+**Merged pull requests:**
+
+- defenum/2: use caller as the module [\#1](https://github.com/coingaming/gen_enum/pull/1) ([hypno2000](https://github.com/hypno2000))
+
+## [v0.2.3](https://github.com/coingaming/gen_enum/tree/v0.2.3) (2018-10-22)
+[Full Changelog](https://github.com/coingaming/gen_enum/compare/v0.2.2...v0.2.3)
+
 ## [v0.2.2](https://github.com/coingaming/gen_enum/tree/v0.2.2) (2018-10-08)
 [Full Changelog](https://github.com/coingaming/gen_enum/compare/v0.2.1...v0.2.2)
 
