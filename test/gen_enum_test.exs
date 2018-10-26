@@ -140,4 +140,15 @@ defmodule GenEnumTest do
       end
     end
   end)
+
+  test "invalid context for defenum/2" do
+    assert_raise RuntimeError, "&GenEnum.defenum/2 macro can be executed only inside the module", fn ->
+      quote do
+        require GenEnum
+        GenEnum.defenum(:os, [:LINUX, :MAC, :WINDOWS])
+      end
+      |> Code.eval_quoted
+    end
+  end
+
 end
