@@ -20,6 +20,7 @@ defmodule GenEnum do
       %Macro.Env{module: nil} -> raise("&GenEnum.defenum/2 macro can be executed only inside the module")
       %Macro.Env{} -> :ok
     end
+
     quote do
       GenEnum.defenum(nil, unquote(quoted_database_type), unquote(quoted_values))
     end
