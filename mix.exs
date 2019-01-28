@@ -64,7 +64,7 @@ defmodule GenEnum.MixProject do
   defp deps do
     [
       {:aspire, "~> 0.1.0"},
-      {:ecto_enum, "~> 1.1", organization: "coingaming"},
+      {:ecto_enum, "~> 1.1"},
       {:ecto_sql, "~> 3.0.0"},
       # development tools
       {:excoveralls, "~> 0.8", only: [:dev, :test], runtime: false},
