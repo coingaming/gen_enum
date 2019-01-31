@@ -13,6 +13,7 @@ defmodule GenEnum.MixProject do
       # excoveralls
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
+        bench: :bench,
         coveralls: :test,
         "coveralls.travis": :test,
         "coveralls.circle": :test,
@@ -21,6 +22,7 @@ defmodule GenEnum.MixProject do
         "coveralls.detail": :test,
         "coveralls.html": :test
       ],
+      consolidate_protocols: Mix.env() in [:prod, :bench],
       # dialyxir
       dialyzer: [
         ignore_warnings: ".dialyzer_ignore",
@@ -58,6 +60,7 @@ defmodule GenEnum.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:bench), do: ["lib", "bench/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Run "mix help deps" to learn about dependencies.
@@ -67,6 +70,7 @@ defmodule GenEnum.MixProject do
       {:ecto_enum, "~> 1.1"},
       {:ecto_sql, "~> 3.0.0"},
       # development tools
+      {:benchfella, "~> 0.3.0", runtime: false},
       {:excoveralls, "~> 0.8", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.19", only: [:dev, :test], runtime: false},

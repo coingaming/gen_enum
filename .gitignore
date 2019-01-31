@@ -24,3 +24,4 @@ gen_enum-*.tar
 
 
 /.elixir_ls
+/bench/snapshots

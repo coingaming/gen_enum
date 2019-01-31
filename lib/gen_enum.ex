@@ -57,6 +57,7 @@ defmodule GenEnum do
 
       defmodule unquote(Module.concat(full_module, "Utils")) do
         unquote(define_to_enum(full_module))
+        unquote(define_from_atom_priv(values))
         unquote(define_from_string_priv(values))
 
         def values do
@@ -95,31 +96,39 @@ defmodule GenEnum do
       @spec to_enum(any) :: {:ok, unquote(module).Meta.t()} | {:error, String.t()}
       def to_enum(value) do
         value
-        |> Aspire.to_string()
+        |> from_atom_priv
         |> case do
-          bin when is_binary(bin) ->
-            bin
-            |> String.valid?()
-            |> case do
-              true ->
-                bin
-                |> String.trim()
-                |> String.upcase()
-                |> from_string_priv
-                |> case do
-                  :error ->
-                    {:error, "can not convert value to #{unquote(module)}, got invalid string from: #{inspect(value)}"}
+          {:ok, result} ->
+            {:ok, result}
 
-                  {:ok, result} ->
-                    {:ok, result}
+          :error ->
+            value
+            |> Aspire.to_string()
+            |> case do
+              bin when is_binary(bin) ->
+                bin
+                |> String.valid?()
+                |> case do
+                  true ->
+                    bin
+                    |> String.trim()
+                    |> String.upcase()
+                    |> from_string_priv
+                    |> case do
+                      {:ok, result} ->
+                        {:ok, result}
+
+                      :error ->
+                        {:error, "can not convert value to #{unquote(module)}, got invalid string from: #{inspect(value)}"}
+                    end
+
+                  false ->
+                    {:error, "can not convert value to #{unquote(module)}, got invalid binary from: #{inspect(value)}"}
                 end
 
-              false ->
-                {:error, "can not convert value to #{unquote(module)}, got invalid binary from: #{inspect(value)}"}
+              ^value ->
+                {:error, "can not convert value to #{unquote(module)}, got invalid term: #{inspect(value)}"}
             end
-
-          ^value ->
-            {:error, "can not convert value to #{unquote(module)}, got invalid term: #{inspect(value)}"}
         end
       end
 
@@ -135,11 +144,31 @@ defmodule GenEnum do
     end
   end
 
+  defp define_from_atom_priv(items) do
+    items
+    |> Enum.reduce(
+      quote do
+        defp from_atom_priv(_) do
+          :error
+        end
+      end,
+      fn value, acc ->
+        quote do
+          defp from_atom_priv(unquote(value)) do
+            {:ok, unquote(value)}
+          end
+
+          unquote(acc)
+        end
+      end
+    )
+  end
+
   defp define_from_string_priv(items) do
     items
     |> Enum.reduce(
       quote do
-        defp from_string_priv(value) do
+        defp from_string_priv(_) do
           :error
         end
       end,

@@ -71,6 +71,7 @@ defmodule GenEnumTest do
 
     test "#{module} Utils.to_enum" do
       alias unquote(module).OS
+      assert {:ok, :MAC} == OS.Utils.to_enum(:MAC)
       assert {:ok, :MAC} == OS.Utils.to_enum(:mac)
       assert {:ok, :MAC} == OS.Utils.to_enum("mac")
       assert {:ok, :MAC} == OS.Utils.to_enum("Mac\n")
@@ -83,6 +84,7 @@ defmodule GenEnumTest do
 
     test "#{module} Utils.to_enum!" do
       alias unquote(module).OS
+      assert :MAC == OS.Utils.to_enum!(:MAC)
       assert :MAC == OS.Utils.to_enum!(:mac)
       assert :MAC == OS.Utils.to_enum!("mac")
       assert :MAC == OS.Utils.to_enum!("Mac\n")
