@@ -70,7 +70,7 @@ defmodule GenEnum.MixProject do
       {:ecto_enum, "~> 1.1"},
       {:ecto_sql, "~> 3.0.0"},
       # development tools
-      {:benchfella, "~> 0.3.0", runtime: false},
+      {:benchfella, "~> 0.3.0", only: :bench, runtime: false},
       {:excoveralls, "~> 0.8", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.19", only: [:dev, :test], runtime: false},
