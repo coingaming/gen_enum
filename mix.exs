@@ -69,6 +69,7 @@ defmodule GenEnum.MixProject do
       {:aspire, "~> 0.1.0"},
       {:ecto_enum, "~> 1.1"},
       {:ecto_sql, "~> 3.0.0"},
+      {:uelli, "~> 0.1"},
       # development tools
       {:benchfella, "~> 0.3.0", only: :bench, runtime: false},
       {:excoveralls, "~> 0.8", only: [:dev, :test], runtime: false},

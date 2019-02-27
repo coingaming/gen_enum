@@ -3,60 +3,157 @@ defmodule GenEnum do
   Better enumerations support for Elixir and Ecto
   """
 
+  require Uelli
+
   @doc """
   Macro defines helper modules for better enum support
 
-  - `EctoEnum` definition
+  - `EctoEnum` definition (if `:database_type` option is provided)
   - `Utils` module with helper functions
   - `Items` module with macro wrapper for each enum value (to not use atoms in source code)
   - `Meta` module with heplful macros (to not use atoms in source code)
 
-  Arguments are the same as in `EctoEnum` defenum macro
+  Argument is
+
+  - non empty list of enum values
+  - OR keyword list of options
+    - `:module` is Elixir module name (for given enum) - can be `nil`
+    - `:database_type` is atom (alias for database type for given enum) - can be `nil`
+    - `:values` is non empty list of enum values (atoms)
+
+  ## Examples
+
+  ```
+  iex> defmodule Os do
+  ...>   require GenEnum
+  ...>   GenEnum.defenum [:LINUX, :MAC, :WINDOWS]
+  ...> end
+  iex> quote do
+  ...>   require Os.Items
+  ...>   Os.Items.linux()
+  ...> end
+  ...> |> Code.eval_quoted
+  {:LINUX, []}
+  ```
   """
-
-  defmacro defenum(quoted_database_type, quoted_values) do
-    __CALLER__
+  defmacro defenum([_ | _] = code) do
+    code
+    |> Keyword.keyword?()
     |> case do
-      %Macro.Env{module: nil} -> raise("&GenEnum.defenum/2 macro can be executed only inside the module")
-      %Macro.Env{} -> :ok
-    end
+      true ->
+        opts_ast = {
+          :%,
+          [],
+          [
+            {:__aliases__, [alias: false], [:GenEnum, :Opts]},
+            {:%{}, [], code}
+          ]
+        }
 
-    quote do
-      GenEnum.defenum(nil, unquote(quoted_database_type), unquote(quoted_values))
+        quote do
+          GenEnum.defenum(unquote(opts_ast))
+        end
+
+      false ->
+        quote do
+          GenEnum.defenum(%GenEnum.Opts{values: unquote(code)})
+        end
     end
   end
 
-  defmacro defenum(quoted_module, quoted_database_type, quoted_values) do
+  defmacro defenum(code) do
+    {
+      %GenEnum.Opts{
+        module: arg_module,
+        database_type: database_type,
+        values: values
+      } = raw_opts,
+      []
+    } = Code.eval_quoted(code, [], __CALLER__)
+
     %Macro.Env{module: caller_module} = __CALLER__
 
-    {module, []} = Code.eval_quoted(quoted_module, [], __CALLER__)
-    full_module = (module && Module.concat(caller_module, module)) || caller_module
-    {database_type, []} = Code.eval_quoted(quoted_database_type, [], __CALLER__)
-    {values, []} = Code.eval_quoted(quoted_values, [], __CALLER__)
-
-    :ok = validate_module(module)
+    :ok = validate_modules(arg_module, caller_module)
     :ok = validate_database_type(database_type)
     :ok = validate_values(values)
+
+    full_module = (arg_module && Module.concat(caller_module, arg_module)) || caller_module
+
+    fixed_opts = %GenEnum.Opts{raw_opts | module: full_module}
 
     #
     # generated code
     #
 
     quote do
+      unquote(define_ecto_enum(fixed_opts))
+      unquote(define_enum_items(fixed_opts))
+      unquote(define_utils(fixed_opts))
+      unquote(define_meta(fixed_opts))
+    end
+  end
+
+  #
+  # priv code generators
+  #
+
+  defp define_ecto_enum(%GenEnum.Opts{
+         module: module,
+         database_type: database_type,
+         values: [_ | _] = values
+       })
+       when Uelli.non_nil_atom(module) and Uelli.non_nil_atom(database_type) do
+    quote do
       require EctoEnum
 
       EctoEnum.defenum(
-        unquote(Module.concat(full_module, "EctoEnum")),
+        unquote(Module.concat(module, "EctoEnum")),
         unquote(database_type),
         unquote(values)
       )
+    end
+  end
 
-      defmodule unquote(Module.concat(full_module, "Items")) do
-        unquote(define_enum_items(values))
+  defp define_ecto_enum(%GenEnum.Opts{
+         module: module,
+         database_type: nil,
+         values: [_ | _]
+       })
+       when Uelli.non_nil_atom(module) do
+    quote do
+    end
+  end
+
+  defp define_enum_items(%GenEnum.Opts{
+         module: module,
+         values: [_ | _] = values
+       })
+       when Uelli.non_nil_atom(module) do
+    code =
+      values
+      |> Enum.map(fn v ->
+        quote do
+          defmacro unquote(v |> Atom.to_string() |> String.downcase() |> String.to_atom())() do
+            unquote(v)
+          end
+        end
+      end)
+
+    quote do
+      defmodule unquote(Module.concat(module, "Items")) do
+        (unquote_splicing(code))
       end
+    end
+  end
 
-      defmodule unquote(Module.concat(full_module, "Utils")) do
-        unquote(define_to_enum(full_module))
+  defp define_utils(%GenEnum.Opts{
+         module: module,
+         values: [_ | _] = values
+       })
+       when Uelli.non_nil_atom(module) do
+    quote do
+      defmodule unquote(Module.concat(module, "Utils")) do
+        unquote(define_to_enum(module))
         unquote(define_from_atom_priv(values))
         unquote(define_from_string_priv(values))
 
@@ -64,13 +161,34 @@ defmodule GenEnum do
           unquote(values)
         end
       end
+    end
+  end
 
-      defmodule unquote(Module.concat(full_module, "Meta")) do
+  defp define_meta(%GenEnum.Opts{
+         module: module,
+         database_type: database_type,
+         values: [_ | _] = values
+       })
+       when Uelli.non_nil_atom(module) do
+    database_type_code =
+      database_type
+      |> case do
+        _ when Uelli.non_nil_atom(database_type) ->
+          quote do
+            defmacro database_type do
+              unquote(database_type)
+            end
+          end
+
+        nil ->
+          quote do
+          end
+      end
+
+    quote do
+      defmodule unquote(Module.concat(module, "Meta")) do
         unquote(define_enum_typespec(values))
-
-        defmacro database_type do
-          unquote(database_type)
-        end
+        unquote(database_type_code)
 
         defmacro values do
           unquote(values)
@@ -88,7 +206,7 @@ defmodule GenEnum do
   end
 
   #
-  # priv code generators
+  # low lvl priv code generators
   #
 
   defp define_to_enum(module) do
@@ -145,60 +263,47 @@ defmodule GenEnum do
   end
 
   defp define_from_atom_priv(items) do
-    items
-    |> Enum.reduce(
-      quote do
-        defp from_atom_priv(_) do
-          :error
-        end
-      end,
-      fn value, acc ->
+    code =
+      Enum.map(items, fn value ->
         quote do
           defp from_atom_priv(unquote(value)) do
             {:ok, unquote(value)}
           end
-
-          unquote(acc)
         end
-      end
-    )
+      end)
+      |> Enum.concat([
+        quote do
+          defp from_atom_priv(_) do
+            :error
+          end
+        end
+      ])
+
+    quote do
+      (unquote_splicing(code))
+    end
   end
 
   defp define_from_string_priv(items) do
-    items
-    |> Enum.reduce(
-      quote do
-        defp from_string_priv(_) do
-          :error
-        end
-      end,
-      fn value, acc ->
+    code =
+      Enum.map(items, fn value ->
         quote do
           defp from_string_priv(unquote(value |> Atom.to_string())) do
             {:ok, unquote(value)}
           end
-
-          unquote(acc)
         end
-      end
-    )
-  end
-
-  defp define_enum_items(items) do
-    items
-    |> Enum.reduce(
-      quote do
-      end,
-      fn enum_item, acc ->
+      end)
+      |> Enum.concat([
         quote do
-          unquote(acc)
-
-          defmacro unquote(enum_item |> Atom.to_string() |> String.downcase() |> String.to_atom())() do
-            unquote(enum_item)
+          defp from_string_priv(_) do
+            :error
           end
         end
-      end
-    )
+      ])
+
+    quote do
+      (unquote_splicing(code))
+    end
   end
 
   defp define_enum_typespec(enum_atoms) do
@@ -235,16 +340,35 @@ defmodule GenEnum do
   # priv validators
   #
 
-  defp validate_module(atom) when is_atom(atom) do
+  defp validate_modules(nil, nil) do
+    raise("GenEnum.defenum/1 macro can be executed only inside the module when :module parameter is not specified")
+  end
+
+  defp validate_modules(nil, caller_module) when Uelli.non_nil_atom(caller_module) do
     #
     # TODO : !!!
     #
     :ok
   end
 
-  defp validate_module(some), do: raise("invalid module name #{inspect(some)}")
+  defp validate_modules(arg_module, nil) when Uelli.non_nil_atom(arg_module) do
+    #
+    # TODO : !!!
+    #
+    :ok
+  end
 
-  defp validate_database_type(atom) when is_atom(atom) and atom != nil do
+  defp validate_modules(arg_module, caller_module)
+       when Uelli.non_nil_atom(arg_module) and Uelli.non_nil_atom(caller_module) do
+    #
+    # TODO : !!!
+    #
+    :ok
+  end
+
+  defp validate_modules(arg_module, _), do: raise("invalid module name #{inspect(arg_module)}")
+
+  defp validate_database_type(atom) when is_atom(atom) do
     #
     # TODO : !!!
     #

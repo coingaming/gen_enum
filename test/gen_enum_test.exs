@@ -1,17 +1,34 @@
 require GenEnum
-GenEnum.defenum(Single, :single, [:ONE])
 
-require GenEnum
-GenEnum.defenum(MyMod1.OS, :os, [:LINUX, :MAC, :WINDOWS])
+GenEnum.defenum(
+  module: Single,
+  database_type: :single,
+  values: [:ONE]
+)
+
+GenEnum.defenum(
+  module: MyMod1.OS,
+  database_type: :os,
+  values: [:LINUX, :MAC, :WINDOWS]
+)
 
 defmodule MyMod2.OS do
   require GenEnum
-  GenEnum.defenum(:os, [:LINUX, :MAC, :WINDOWS])
+
+  GenEnum.defenum(
+    database_type: :os,
+    values: [:LINUX, :MAC, :WINDOWS]
+  )
 end
 
 defmodule MyMod3 do
   require GenEnum
-  GenEnum.defenum(OS, :os, [:LINUX, :MAC, :WINDOWS])
+
+  GenEnum.defenum(
+    module: OS,
+    database_type: :os,
+    values: [:LINUX, :MAC, :WINDOWS]
+  )
 end
 
 defmodule GenEnumTest do
@@ -105,7 +122,12 @@ defmodule GenEnumTest do
       assert_raise RuntimeError, "invalid module name \"OS\"", fn ->
         quote do
           require GenEnum
-          GenEnum.defenum("OS", :os, [:LINUX, :MAC, :WINDOWS])
+
+          GenEnum.defenum(
+            module: "OS",
+            database_type: :os,
+            values: [:LINUX, :MAC, :WINDOWS]
+          )
         end
         |> Code.eval_quoted()
       end
@@ -117,7 +139,12 @@ defmodule GenEnumTest do
       assert_raise RuntimeError, "invalid database type \"os\"", fn ->
         quote do
           require GenEnum
-          GenEnum.defenum(OS, "os", [:LINUX, :MAC, :WINDOWS])
+
+          GenEnum.defenum(
+            module: OS,
+            database_type: "os",
+            values: [:LINUX, :MAC, :WINDOWS]
+          )
         end
         |> Code.eval_quoted()
       end
@@ -129,7 +156,12 @@ defmodule GenEnumTest do
       assert_raise RuntimeError, "invalid enum values []", fn ->
         quote do
           require GenEnum
-          GenEnum.defenum(OS, :os, [])
+
+          GenEnum.defenum(
+            module: OS,
+            database_type: :os,
+            values: []
+          )
         end
         |> Code.eval_quoted()
       end
@@ -141,7 +173,12 @@ defmodule GenEnumTest do
       assert_raise RuntimeError, "invalid enum values [\"LINUX\"]", fn ->
         quote do
           require GenEnum
-          GenEnum.defenum(OS, :os, ["LINUX", :MAC, :WINDOWS])
+
+          GenEnum.defenum(
+            module: OS,
+            database_type: :os,
+            values: ["LINUX", :MAC, :WINDOWS]
+          )
         end
         |> Code.eval_quoted()
       end
@@ -149,12 +186,18 @@ defmodule GenEnumTest do
   end)
 
   test "invalid context for defenum/2" do
-    assert_raise RuntimeError, "&GenEnum.defenum/2 macro can be executed only inside the module", fn ->
-      quote do
-        require GenEnum
-        GenEnum.defenum(:os, [:LINUX, :MAC, :WINDOWS])
-      end
-      |> Code.eval_quoted()
-    end
+    assert_raise RuntimeError,
+                 "GenEnum.defenum/1 macro can be executed only inside the module when :module parameter is not specified",
+                 fn ->
+                   quote do
+                     require GenEnum
+
+                     GenEnum.defenum(
+                       database_type: :os,
+                       values: [:LINUX, :MAC, :WINDOWS]
+                     )
+                   end
+                   |> Code.eval_quoted()
+                 end
   end
 end
