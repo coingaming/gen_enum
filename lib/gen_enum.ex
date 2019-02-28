@@ -17,8 +17,8 @@ defmodule GenEnum do
 
   - non empty list of enum values
   - OR keyword list of options
-    - `:module` is Elixir module name (for given enum) - can be `nil`
-    - `:database_type` is atom (alias for database type for given enum) - can be `nil`
+    - `:module` is Elixir module name (for given enum) - can be `nil`/unset
+    - `:database_type` is atom (alias for database type for given enum) - can be `nil`/unset
     - `:values` is non empty list of enum values (atoms)
 
   ## Examples
@@ -34,6 +34,30 @@ defmodule GenEnum do
   ...> end
   ...> |> Code.eval_quoted
   {:LINUX, []}
+
+  iex> require GenEnum
+  iex> GenEnum.defenum module: Ord, values: [:EQ, :GT, :LT]
+  iex> quote do
+  ...>   require Ord.Items
+  ...>   Ord.Items.eq()
+  ...> end
+  ...> |> Code.eval_quoted
+  {:EQ, []}
+
+  iex> require GenEnum
+  iex> GenEnum.defenum module: CurrencyCode, database_type: :currency_code, values: [:USD, :EUR]
+  iex> quote do
+  ...>   require CurrencyCode.Items
+  ...>   CurrencyCode.Items.usd()
+  ...> end
+  ...> |> Code.eval_quoted
+  {:USD, []}
+  iex> quote do
+  ...>   require CurrencyCode.Meta
+  ...>   CurrencyCode.Meta.database_type()
+  ...> end
+  ...> |> Code.eval_quoted
+  {:currency_code, []}
   ```
   """
   defmacro defenum([_ | _] = code) do

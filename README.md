@@ -5,11 +5,13 @@
 
 <img src="priv/gen_enum_logo.png" width="300"/>
 
-Enumerations are common abstraction to express the limited set of values. In Elixir language enumeration values are usually expressed as atoms. **&GenEnum.defenum/3** macro generates compile/runtime utilities for given enumeration. It accepts 3 arguments:
+Enumerations are common abstraction to express the limited set of values. In Elixir language enumeration values are usually expressed as atoms. **&GenEnum.defenum/1** macro generates compile/runtime utilities for given enumeration. Argument is
 
-1. Main module of enumeration definition, example: **OS** (atom)
-2. Enumeration type alias for database, example: **:os** (atom)
-3. Possible enumeration elements, example: **[:LINUX, :MAC, :WINDOWS]** (list of atoms)
+- non empty list of enum values (atoms), example: **[:LINUX, :MAC, :WINDOWS]**
+- **OR** keyword list of options
+  - `:module` is Elixir module name (main module of enumeration definition) - can be `nil`/unset, example: **OS**
+  - `:database_type` is atom (alias for database type for given enum) - can be `nil`/unset, example: **:os**
+  - `:values` is non empty list of enum values (atoms), example: **[:LINUX, :MAC, :WINDOWS]**
 
 ## Installation
 
@@ -19,24 +21,24 @@ by adding `gen_enum` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:gen_enum, "~> X.X.X", organization: "coingaming"}
+    {:gen_enum, "~> 0.3", organization: "coingaming"}
   ]
 end
 ```
 
 ## Example
 
-Let's use **&GenEnum.defenum/3** macro and generate **OS** enumeration:
+Let's use **&GenEnum.defenum/1** macro and generate **OS** enumeration:
 
 ```elixir
 require GenEnum
-GenEnum.defenum(OS, :os, [:LINUX, :MAC, :WINDOWS])
+GenEnum.defenum(module: OS, database_type: :os, values: [:LINUX, :MAC, :WINDOWS])
 ```
 Under **OS** module namespace this expression generates 4 additional modules:
 
 ### 1) OS.EctoEnum
 
-Module contains standard [EctoEnum](https://github.com/gjaldon/ecto_enum) definition of given enumeration. Can be used for Ecto integration and database migrations (read EctoEnum manual).
+Module contains standard [EctoEnum](https://github.com/gjaldon/ecto_enum) definition of given enumeration. Can be used for Ecto integration and database migrations (read EctoEnum manual). If `:database_type` is `nil`/unset then this module will not be generated.
 
 ### 2) OS.Items
 
@@ -75,7 +77,7 @@ OS.Meta
   end
   ```
 
-  - **database_type** macro wrapper for database type of enum in Ecto migrations
+  - **database_type** macro wrapper for database type of enum in Ecto migrations. If `:database_type` argument is `nil`/unset then this macro will not be generated.
 
   ```elixir
   iex> OS.Meta.database_type
