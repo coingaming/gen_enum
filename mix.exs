@@ -39,13 +39,12 @@ defmodule GenEnum.MixProject do
       # hex.pm stuff
       description: "Better enumerations support for Elixir and Ecto",
       package: [
-        organization: "coingaming",
         licenses: ["Apache 2.0"],
         files: ["lib", "priv", "mix.exs", "README*", "VERSION*"],
         maintainers: ["timCF"],
         links: %{
           "GitHub" => "https://github.com/coingaming/gen_enum",
-          "Author's home page" => "https://timcf.github.io/"
+          "Author's home page" => "https://itkach.uk"
         }
       ]
     ]

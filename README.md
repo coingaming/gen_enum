@@ -21,7 +21,7 @@ by adding `gen_enum` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:gen_enum, "~> 0.3", organization: "coingaming"}
+    {:gen_enum, "~> 0.3"}
   ]
 end
 ```
