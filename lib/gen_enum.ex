@@ -38,8 +38,8 @@ defmodule GenEnum do
   iex> require GenEnum
   iex> GenEnum.defenum module: Ord, values: [:EQ, :GT, :LT]
   iex> quote do
-  ...>   require GenEnumTest.Ord.Items
-  ...>   GenEnumTest.Ord.Items.eq()
+  ...>   require Ord.Items
+  ...>   Ord.Items.eq()
   ...> end
   ...> |> Code.eval_quoted
   {:EQ, []}
@@ -47,14 +47,14 @@ defmodule GenEnum do
   iex> require GenEnum
   iex> GenEnum.defenum module: CurrencyCode, database_type: :currency_code, values: [:USD, :EUR]
   iex> quote do
-  ...>   require GenEnumTest.CurrencyCode.Items
-  ...>   GenEnumTest.CurrencyCode.Items.usd()
+  ...>   require CurrencyCode.Items
+  ...>   CurrencyCode.Items.usd()
   ...> end
   ...> |> Code.eval_quoted
   {:USD, []}
   iex> quote do
-  ...>   require GenEnumTest.CurrencyCode.Meta
-  ...>   GenEnumTest.CurrencyCode.Meta.database_type()
+  ...>   require CurrencyCode.Meta
+  ...>   CurrencyCode.Meta.database_type()
   ...> end
   ...> |> Code.eval_quoted
   {:currency_code, []}
@@ -103,6 +103,18 @@ defmodule GenEnum do
 
     full_module = (arg_module && Module.concat(caller_module, arg_module)) || caller_module
 
+    alias_ast =
+      if arg_module && caller_module do
+        [first_chunk | _] = Module.split(arg_module)
+
+        quote do
+          alias unquote(Module.concat(caller_module, first_chunk))
+        end
+      else
+        quote do
+        end
+      end
+
     fixed_opts = %GenEnum.Opts{raw_opts | module: full_module}
 
     #
@@ -114,6 +126,7 @@ defmodule GenEnum do
       unquote(define_enum_items(fixed_opts))
       unquote(define_utils(fixed_opts))
       unquote(define_meta(fixed_opts))
+      unquote(alias_ast)
     end
   end
 
