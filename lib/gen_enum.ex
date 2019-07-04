@@ -38,8 +38,8 @@ defmodule GenEnum do
   iex> require GenEnum
   iex> GenEnum.defenum module: Ord, values: [:EQ, :GT, :LT]
   iex> quote do
-  ...>   require Ord.Items
-  ...>   Ord.Items.eq()
+  ...>   require GenEnumTest.Ord.Items
+  ...>   GenEnumTest.Ord.Items.eq()
   ...> end
   ...> |> Code.eval_quoted
   {:EQ, []}
@@ -47,14 +47,14 @@ defmodule GenEnum do
   iex> require GenEnum
   iex> GenEnum.defenum module: CurrencyCode, database_type: :currency_code, values: [:USD, :EUR]
   iex> quote do
-  ...>   require CurrencyCode.Items
-  ...>   CurrencyCode.Items.usd()
+  ...>   require GenEnumTest.CurrencyCode.Items
+  ...>   GenEnumTest.CurrencyCode.Items.usd()
   ...> end
   ...> |> Code.eval_quoted
   {:USD, []}
   iex> quote do
-  ...>   require CurrencyCode.Meta
-  ...>   CurrencyCode.Meta.database_type()
+  ...>   require GenEnumTest.CurrencyCode.Meta
+  ...>   GenEnumTest.CurrencyCode.Meta.database_type()
   ...> end
   ...> |> Code.eval_quoted
   {:currency_code, []}
@@ -333,7 +333,7 @@ defmodule GenEnum do
   defp define_enum_typespec(enum_atoms) do
     {:@, [context: Elixir, import: Kernel],
      [
-       {:type, [context: Elixir], [{:::, [], [{:t, [], Elixir}, define_algebraic_type(enum_atoms)]}]}
+       {:type, [context: Elixir], [{:"::", [], [{:t, [], Elixir}, define_algebraic_type(enum_atoms)]}]}
      ]}
   end
 
