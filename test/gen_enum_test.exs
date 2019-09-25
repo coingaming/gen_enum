@@ -9,7 +9,7 @@ GenEnum.defenum(
 GenEnum.defenum(
   module: MyMod1.OS,
   database_type: :os,
-  values: [:LINUX, :MAC, :WINDOWS]
+  values: [:LINUX, :Mac, :windows]
 )
 
 defmodule MyMod2.OS do
@@ -17,7 +17,7 @@ defmodule MyMod2.OS do
 
   GenEnum.defenum(
     database_type: :os,
-    values: [:LINUX, :MAC, :WINDOWS]
+    values: [:LINUX, :Mac, :windows]
   )
 end
 
@@ -27,7 +27,7 @@ defmodule MyMod3 do
   GenEnum.defenum(
     module: OS,
     database_type: :os,
-    values: [:LINUX, :MAC, :WINDOWS]
+    values: [:LINUX, :Mac, :windows]
   )
 end
 
@@ -46,8 +46,8 @@ defmodule GenEnumTest do
       alias unquote(module).OS
       require OS.Items
       assert OS.Items.linux() == :LINUX
-      assert OS.Items.mac() == :MAC
-      assert OS.Items.windows() == :WINDOWS
+      assert OS.Items.mac() == :Mac
+      assert OS.Items.windows() == :windows
     end
 
     test "#{module} Meta.t" do
@@ -63,8 +63,8 @@ defmodule GenEnumTest do
 
       alias unquote(Module.concat(module, "Game"))
       assert Game.choose_os(1) == :LINUX
-      assert Game.choose_os(31) == :MAC
-      assert Game.choose_os(61) == :WINDOWS
+      assert Game.choose_os(31) == :Mac
+      assert Game.choose_os(61) == :windows
     end
 
     test "#{module} Meta.database_type" do
@@ -76,22 +76,22 @@ defmodule GenEnumTest do
     test "#{module} Meta.values" do
       alias unquote(module).OS
       require OS.Meta
-      assert OS.Meta.values() == [:LINUX, :MAC, :WINDOWS]
+      assert OS.Meta.values() == [:LINUX, :Mac, :windows]
     end
 
     test "#{module} Meta.is_type" do
       alias unquote(module).OS
       require OS.Meta
-      assert OS.Meta.is_type(:MAC)
+      assert OS.Meta.is_type(:Mac)
       assert not OS.Meta.is_type(:HELLO)
     end
 
     test "#{module} Utils.to_enum" do
       alias unquote(module).OS
-      assert {:ok, :MAC} == OS.Utils.to_enum(:MAC)
-      assert {:ok, :MAC} == OS.Utils.to_enum(:mac)
-      assert {:ok, :MAC} == OS.Utils.to_enum("mac")
-      assert {:ok, :MAC} == OS.Utils.to_enum("Mac\n")
+      assert {:ok, :Mac} == OS.Utils.to_enum(:Mac)
+      assert {:ok, :Mac} == OS.Utils.to_enum(:mac)
+      assert {:ok, :Mac} == OS.Utils.to_enum("mac")
+      assert {:ok, :Mac} == OS.Utils.to_enum("Mac\n")
 
       assert {
                :error,
@@ -101,10 +101,10 @@ defmodule GenEnumTest do
 
     test "#{module} Utils.to_enum!" do
       alias unquote(module).OS
-      assert :MAC == OS.Utils.to_enum!(:MAC)
-      assert :MAC == OS.Utils.to_enum!(:mac)
-      assert :MAC == OS.Utils.to_enum!("mac")
-      assert :MAC == OS.Utils.to_enum!("Mac\n")
+      assert :Mac == OS.Utils.to_enum!(:Mac)
+      assert :Mac == OS.Utils.to_enum!(:mac)
+      assert :Mac == OS.Utils.to_enum!("mac")
+      assert :Mac == OS.Utils.to_enum!("Mac\n")
 
       assert_raise RuntimeError, ~r/can not convert value to #{unquote(module)}.OS, got invalid string from: \"MacOs\"/, fn ->
         OS.Utils.to_enum!("MacOs")
@@ -113,7 +113,7 @@ defmodule GenEnumTest do
 
     test "#{module} Utils.values" do
       alias unquote(module).OS
-      assert OS.Utils.values() == [:LINUX, :MAC, :WINDOWS]
+      assert OS.Utils.values() == [:LINUX, :Mac, :windows]
     end
 
     test "#{module} invalid module" do
@@ -126,7 +126,7 @@ defmodule GenEnumTest do
           GenEnum.defenum(
             module: "OS",
             database_type: :os,
-            values: [:LINUX, :MAC, :WINDOWS]
+            values: [:LINUX, :Mac, :windows]
           )
         end
         |> Code.eval_quoted()
@@ -143,7 +143,7 @@ defmodule GenEnumTest do
           GenEnum.defenum(
             module: OS,
             database_type: "os",
-            values: [:LINUX, :MAC, :WINDOWS]
+            values: [:LINUX, :Mac, :windows]
           )
         end
         |> Code.eval_quoted()
@@ -177,7 +177,7 @@ defmodule GenEnumTest do
           GenEnum.defenum(
             module: OS,
             database_type: :os,
-            values: ["LINUX", :MAC, :WINDOWS]
+            values: ["LINUX", :Mac, :windows]
           )
         end
         |> Code.eval_quoted()
@@ -194,7 +194,7 @@ defmodule GenEnumTest do
 
                      GenEnum.defenum(
                        database_type: :os,
-                       values: [:LINUX, :MAC, :WINDOWS]
+                       values: [:LINUX, :Mac, :windows]
                      )
                    end
                    |> Code.eval_quoted()

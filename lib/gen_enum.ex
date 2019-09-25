@@ -325,7 +325,7 @@ defmodule GenEnum do
     code =
       Enum.map(items, fn value ->
         quote do
-          defp from_string_priv(unquote(value |> Atom.to_string())) do
+          defp from_string_priv(unquote(value |> Atom.to_string() |> String.upcase())) do
             {:ok, unquote(value)}
           end
         end
