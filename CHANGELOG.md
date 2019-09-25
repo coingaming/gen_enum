@@ -1,5 +1,8 @@
 # Change Log
 
+## [v0.4.1](https://github.com/coingaming/gen_enum/tree/v0.4.1) (2019-07-05)
+[Full Changelog](https://github.com/coingaming/gen_enum/compare/v0.4.0...v0.4.1)
+
 ## [v0.4.0](https://github.com/coingaming/gen_enum/tree/v0.4.0) (2019-07-04)
 [Full Changelog](https://github.com/coingaming/gen_enum/compare/v0.3.0...v0.4.0)
 
