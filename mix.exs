@@ -65,12 +65,12 @@ defmodule GenEnum.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:aspire, "~> 0.1.0"},
+      {:aspire, "~> 0.1"},
       {:ecto_enum, "~> 1.1"},
-      {:ecto_sql, "~> 3.1.0"},
+      {:ecto_sql, "~> 3.1"},
       {:uelli, "~> 0.1"},
       # development tools
-      {:benchfella, "~> 0.3.0", only: :bench, runtime: false},
+      {:benchfella, "~> 0.3", only: :bench, runtime: false},
       {:excoveralls, "~> 0.8", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.19", only: [:dev, :test], runtime: false},
