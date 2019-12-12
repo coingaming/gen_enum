@@ -39,6 +39,7 @@ defmodule GenEnum.MixProject do
       # hex.pm stuff
       description: "Better enumerations support for Elixir and Ecto",
       package: [
+        organization: "coingaming",
         licenses: ["Apache 2.0"],
         files: ["lib", "priv", "mix.exs", "README*", "VERSION*"],
         maintainers: ["timCF"],
@@ -66,7 +67,7 @@ defmodule GenEnum.MixProject do
   defp deps do
     [
       {:aspire, "~> 0.1"},
-      {:ecto_enum, "~> 1.1"},
+      {:ecto_enum, "~> 1.4.1", organization: "coingaming"},
       {:ecto_sql, "~> 3.1"},
       {:uelli, "~> 0.1"},
       # development tools

@@ -49,7 +49,7 @@ defmodule GenEnumTest do
   |> Enum.each(fn module ->
     test "#{module} EctoEnum" do
       alias unquote(module).OS
-      assert OS.EctoEnum.type() == :os
+      assert OS.EctoEnum.type() == :"public.os"
     end
 
     test "#{module} Items" do
