@@ -60,7 +60,7 @@ defmodule GenEnum do
   {:currency_code, []}
   ```
   """
-  defmacro defenum([_ | _] = code) do
+  defmacro defenum(code) when is_list(code) do
     code
     |> Keyword.keyword?()
     |> case do
@@ -137,9 +137,9 @@ defmodule GenEnum do
   defp define_ecto_enum(%GenEnum.Opts{
          module: module,
          database_type: database_type,
-         values: [_ | _] = values
+         values: values
        })
-       when Uelli.non_nil_atom(module) and Uelli.non_nil_atom(database_type) do
+       when Uelli.non_nil_atom(module) and Uelli.non_nil_atom(database_type) and is_list(values) do
     quote do
       require EctoEnum
 
@@ -154,18 +154,18 @@ defmodule GenEnum do
   defp define_ecto_enum(%GenEnum.Opts{
          module: module,
          database_type: nil,
-         values: [_ | _]
+         values: values
        })
-       when Uelli.non_nil_atom(module) do
+       when Uelli.non_nil_atom(module) and is_list(values) do
     quote do
     end
   end
 
   defp define_enum_items(%GenEnum.Opts{
          module: module,
-         values: [_ | _] = values
+         values: values
        })
-       when Uelli.non_nil_atom(module) do
+       when Uelli.non_nil_atom(module) and is_list(values) do
     code =
       values
       |> Enum.map(fn v ->
@@ -185,9 +185,9 @@ defmodule GenEnum do
 
   defp define_utils(%GenEnum.Opts{
          module: module,
-         values: [_ | _] = values
+         values: values
        })
-       when Uelli.non_nil_atom(module) do
+       when Uelli.non_nil_atom(module) and is_list(values) do
     quote do
       defmodule unquote(Module.concat(module, "Utils")) do
         unquote(define_to_enum(module))
@@ -204,9 +204,9 @@ defmodule GenEnum do
   defp define_meta(%GenEnum.Opts{
          module: module,
          database_type: database_type,
-         values: [_ | _] = values
+         values: values
        })
-       when Uelli.non_nil_atom(module) do
+       when Uelli.non_nil_atom(module) and is_list(values) do
     database_type_code =
       database_type
       |> case do
@@ -343,7 +343,9 @@ defmodule GenEnum do
     end
   end
 
-  defp define_enum_typespec(enum_atoms) do
+  defp define_enum_typespec([]), do: nil
+
+  defp define_enum_typespec([_ | _] = enum_atoms) do
     {:@, [context: Elixir, import: Kernel],
      [
        {:type, [context: Elixir], [{:"::", [], [{:t, [], Elixir}, define_algebraic_type(enum_atoms)]}]}
@@ -354,7 +356,7 @@ defmodule GenEnum do
     ast_item
   end
 
-  defp define_algebraic_type(ast_pair = [_, _]) do
+  defp define_algebraic_type([_, _] = ast_pair) do
     {
       :|,
       [],
@@ -414,7 +416,7 @@ defmodule GenEnum do
 
   defp validate_database_type(some), do: raise("invalid database type #{inspect(some)}")
 
-  defp validate_values(list = [_ | _]) do
+  defp validate_values(list) when is_list(list) do
     #
     # TODO
     #

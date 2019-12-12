@@ -1,6 +1,12 @@
 require GenEnum
 
 GenEnum.defenum(
+  module: Empty,
+  database_type: :empty,
+  values: []
+)
+
+GenEnum.defenum(
   module: Single,
   database_type: :single,
   values: [:ONE]
@@ -34,6 +40,10 @@ end
 defmodule GenEnumTest do
   use ExUnit.Case
   doctest GenEnum
+
+  test "empty enum values" do
+    assert Empty.Utils.values() == []
+  end
 
   [MyMod1, MyMod2, MyMod3]
   |> Enum.each(fn module ->
@@ -150,18 +160,18 @@ defmodule GenEnumTest do
       end
     end
 
-    test "#{module} invalid enum values (empty)" do
+    test "#{module} invalid enum values (type)" do
       alias unquote(module).OS
 
-      assert_raise RuntimeError, "invalid enum values []", fn ->
+      assert_raise RuntimeError, "invalid enum values %{hello: :world}", fn ->
         quote do
           require GenEnum
 
-          GenEnum.defenum(
+          GenEnum.defenum(%GenEnum.Opts{
+            values: %{hello: :world},
             module: OS,
-            database_type: :os,
-            values: []
-          )
+            database_type: :os
+          })
         end
         |> Code.eval_quoted()
       end
