@@ -343,8 +343,6 @@ defmodule GenEnum do
     end
   end
 
-  defp define_enum_typespec([]), do: nil
-
   defp define_enum_typespec([_ | _] = enum_atoms) do
     {:@, [context: Elixir, import: Kernel],
      [
