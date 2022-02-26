@@ -2,9 +2,11 @@ defmodule GenEnum.MixProject do
   use Mix.Project
 
   def project do
+    version = version()
+
     [
       app: :gen_enum,
-      version: "VERSION" |> File.read!() |> String.trim(),
+      version: version,
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -31,22 +33,13 @@ defmodule GenEnum.MixProject do
           :ex_unit
         ]
       ],
+      package: package(version),
       # ex_doc
       name: "GenEnum",
       source_url: "https://github.com/coingaming/gen_enum",
-      homepage_url: "https://github.com/coingaming/gen_enum",
+      homepage_url: "https://github.com/coingaming/gen_enum/tree/v#{version}",
       docs: [main: "readme", extras: ["README.md"]],
-      # hex.pm stuff
-      description: "Better enumerations support for Elixir and Ecto",
-      package: [
-        licenses: ["Apache 2.0"],
-        files: ["lib", "priv", "mix.exs", "README*", "VERSION*"],
-        maintainers: ["timCF"],
-        links: %{
-          "GitHub" => "https://github.com/coingaming/gen_enum",
-          "Author's home page" => "https://itkach.uk"
-        }
-      ]
+      description: "Better enumerations support for Elixir and Ecto"
     ]
   end
 
@@ -54,6 +47,24 @@ defmodule GenEnum.MixProject do
   def application do
     [
       extra_applications: [:logger]
+    ]
+  end
+
+  defp version do
+    case File.read("VERSION") do
+      {:ok, version} -> String.trim(version)
+      {:error, _} -> "0.0.0-development"
+    end
+  end
+
+  defp package(version) do
+    [
+      organization: "coingaming",
+      licenses: ["UNLICENSED"],
+      files: ["lib", "mix.exs", "README.md", "CHANGELOG.md", "VERSION"],
+      links: %{
+        "GitHub" => "https://github.com/coingaming/bennu/tree/v#{version}"
+      }
     ]
   end
 
@@ -74,7 +85,7 @@ defmodule GenEnum.MixProject do
       {:excoveralls, "~> 0.8", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.19", only: [:dev, :test], runtime: false},
-      {:credo, "~> 0.9", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:boilex, "~> 0.2", only: [:dev, :test], runtime: false}
     ]
   end

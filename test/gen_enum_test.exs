@@ -1,12 +1,6 @@
 require GenEnum
 
 GenEnum.defenum(
-  module: Empty,
-  database_type: :empty,
-  values: []
-)
-
-GenEnum.defenum(
   module: Single,
   database_type: :single,
   values: [:ONE]
@@ -41,15 +35,11 @@ defmodule GenEnumTest do
   use ExUnit.Case
   doctest GenEnum
 
-  test "empty enum values" do
-    assert Empty.Utils.values() == []
-  end
-
   [MyMod1, MyMod2, MyMod3]
   |> Enum.each(fn module ->
     test "#{module} EctoEnum" do
       alias unquote(module).OS
-      assert OS.EctoEnum.type() == :os
+      assert OS.EctoEnum.type() == :"public.os"
     end
 
     test "#{module} Items" do
