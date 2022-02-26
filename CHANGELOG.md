@@ -1,3 +1,11 @@
+## [0.4.3](https://github.com/coingaming/gen_enum/compare/v0.4.2...v0.4.3) (2022-02-26)
+
+
+### Bug Fixes
+
+* remove empty enum support ([8b4c355](https://github.com/coingaming/gen_enum/commit/8b4c35549710677b0cddf74838d9b2ac7a0e8996))
+* semantic-versioning ([1307d4b](https://github.com/coingaming/gen_enum/commit/1307d4bdf9151fa26aef641d4ed6366c0e0a4a1c))
+
 # Change Log
 
 ## [v0.4.1](https://github.com/coingaming/gen_enum/tree/v0.4.1) (2019-07-05)
