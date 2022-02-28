@@ -1,3 +1,10 @@
+## [0.4.4](https://github.com/coingaming/gen_enum/compare/v0.4.3...v0.4.4) (2022-02-28)
+
+
+### Bug Fixes
+
+* read VERSION in compile time ([c69ce0c](https://github.com/coingaming/gen_enum/commit/c69ce0c9ba72e98b2802b60102b94facbec80856))
+
 ## [0.4.3](https://github.com/coingaming/gen_enum/compare/v0.4.2...v0.4.3) (2022-02-26)
 
 
