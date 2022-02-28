@@ -1,12 +1,15 @@
 defmodule GenEnum.MixProject do
   use Mix.Project
+  
+  @version (case File.read("VERSION") do
+    {:ok, version} -> String.trim(version)
+    {:error, _} -> "0.0.0-development"
+  end)
 
   def project do
-    version = version()
-
     [
       app: :gen_enum,
-      version: version,
+      version: @version,
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -33,12 +36,12 @@ defmodule GenEnum.MixProject do
           :ex_unit
         ]
       ],
-      package: package(version),
+      package: package(),
       # ex_doc
       name: "GenEnum",
       source_url: "https://github.com/coingaming/gen_enum",
-      homepage_url: "https://github.com/coingaming/gen_enum/tree/v#{version}",
-      docs: [main: "readme", extras: ["README.md"]],
+      homepage_url: "https://github.com/coingaming/gen_enum/tree/v#{@version}",
+      docs: [source_ref: "v#{@version}", main: "readme", extras: ["README.md"]],
       description: "Better enumerations support for Elixir and Ecto"
     ]
   end
@@ -50,20 +53,13 @@ defmodule GenEnum.MixProject do
     ]
   end
 
-  defp version do
-    case File.read("VERSION") do
-      {:ok, version} -> String.trim(version)
-      {:error, _} -> "0.0.0-development"
-    end
-  end
-
-  defp package(version) do
+  defp package do
     [
       organization: "coingaming",
       licenses: ["UNLICENSED"],
       files: ["lib", "mix.exs", "README.md", "CHANGELOG.md", "VERSION"],
       links: %{
-        "GitHub" => "https://github.com/coingaming/bennu/tree/v#{version}"
+        "GitHub" => "https://github.com/coingaming/bennu/tree/v#{@version}"
       }
     ]
   end
