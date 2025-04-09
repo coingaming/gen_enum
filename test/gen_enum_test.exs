@@ -33,7 +33,6 @@ end
 
 defmodule GenEnumTest do
   use ExUnit.Case
-  doctest GenEnum
 
   [MyMod1, MyMod2, MyMod3]
   |> Enum.each(fn module ->

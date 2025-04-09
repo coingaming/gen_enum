@@ -1,10 +1,10 @@
 defmodule GenEnum.MixProject do
   use Mix.Project
-  
+
   @version (case File.read("VERSION") do
-    {:ok, version} -> String.trim(version)
-    {:error, _} -> "0.0.0-development"
-  end)
+              {:ok, version} -> String.trim(version)
+              {:error, _} -> "0.0.0-development"
+            end)
 
   def project do
     [
@@ -72,8 +72,7 @@ defmodule GenEnum.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:aspire, "~> 0.1"},
-      {:ecto_enum, "~> 1.1"},
+      {:ecto_enum, "~> 1.4"},
       {:ecto_sql, "~> 3.1"},
       {:uelli, "~> 0.1"},
       # development tools

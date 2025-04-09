@@ -74,8 +74,32 @@ defmodule GenEnum do
           ]
         }
 
+        %Macro.Env{module: caller_module} = __CALLER__
+        arg_module = code |> Keyword.get(:module) |> Macro.expand(__CALLER__)
+
+        full_module = (arg_module && Module.concat(caller_module, arg_module)) || caller_module
+        database_type = code |> Keyword.get(:database_type) |> Macro.expand(__CALLER__)
+        values = code |> Keyword.fetch!(:values) |> Macro.expand(__CALLER__)
+        meta_mod = Module.concat(full_module, "Meta")
+
+        changed? =
+          case Code.ensure_compiled(meta_mod) do
+            {:module, _} ->
+              if function_exported?(meta_mod, :has_changed?, 2) do
+                meta_mod.has_changed?(values, database_type)
+                # apply(meta_mod, :has_changed?, [values, database_type])
+              else
+                true
+              end
+
+            _ ->
+              true
+          end
+
         quote do
-          GenEnum.defenum(unquote(opts_ast))
+          if unquote(changed?) do
+            GenEnum.defenum(unquote(opts_ast))
+          end
         end
 
       false ->
@@ -231,6 +255,11 @@ defmodule GenEnum do
           unquote(values)
         end
 
+        @doc false
+        def has_changed?(new_values, new_database_type) do
+          [unquote(values), unquote(database_type)] !== [new_values, new_database_type]
+        end
+
         defmacro is_type(expression) do
           inner_values = unquote(values)
 
@@ -258,7 +287,7 @@ defmodule GenEnum do
 
           :error ->
             value
-            |> Aspire.to_string()
+            |> to_string()
             |> case do
               bin when is_binary(bin) ->
                 bin
